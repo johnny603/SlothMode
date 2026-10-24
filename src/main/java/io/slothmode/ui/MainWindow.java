@@ -17,7 +17,7 @@ public final class MainWindow {
     }
 
     public void show() {
-        Label sloth = new Label("\uD83E\uDD9C");
+        Label sloth = new Label("🦥");
         sloth.setStyle("-fx-font-size: 96px;");
 
         Label status = new Label("SlothMode is idle");
