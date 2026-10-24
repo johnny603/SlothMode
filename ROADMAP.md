@@ -42,13 +42,13 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 **Goal:** Prove that a full-screen, undismissable, calm overlay is achievable in JavaFX on all three platforms.
 
-- [ ] `LockoutAbstraction` (BRIDGE abstraction) + `LockoutImplementor` interface
-- [ ] `FullscreenLockout` (ConcreteImplementor) — `Stage` in `StageStyle.UNDECORATED`, `fullScreenExitHint = ""`, `setFullScreenExitKeyCombination(KeyCombination.NO_MATCH)`, `alwaysOnTop = true`
-- [ ] `GentleNudgeLockout` (ConcreteImplementor) — a non-fullscreen toast for users who pick "gentle mode"
-- [ ] Calm overlay UI: sloth animation (JavaFX `Timeline`), countdown ring, "you're on a break" copy
-- [ ] Escape hatch for emergencies: hold a key combo for 5 seconds → overlay dismisses but logs a "skipped break" event *(this is deliberate — forcing a break shouldn't trap a user in an emergency)*
-- [ ] `LockoutAbstractionTest` (Mockito) — the abstraction delegates to the implementor
-- [ ] Manual test checklist on Windows / macOS / Linux (documented in `docs/lockout-manual-test.md`)
+- [x] `LockoutAbstraction` (BRIDGE abstraction) + `LockoutImplementor` interface
+- [x] `FullscreenLockout` (ConcreteImplementor) — `Stage` in `StageStyle.UNDECORATED`, `fullScreenExitHint = ""`, `setFullScreenExitKeyCombination(KeyCombination.NO_MATCH)`, `alwaysOnTop = true`
+- [x] `GentleNudgeLockout` (ConcreteImplementor) — a non-fullscreen toast for users who pick "gentle mode"
+- [x] Calm overlay UI: sloth animation (JavaFX `Timeline`), countdown ring, "you're on a break" copy
+- [x] Escape hatch for emergencies: hold a key combo for 5 seconds → overlay dismisses but logs a "skipped break" event *(this is deliberate — forcing a break shouldn't trap a user in an emergency)*
+- [x] `LockoutAbstractionTest` (Mockito) — the abstraction delegates to the implementor
+- [x] Manual test checklist on Windows / macOS / Linux (documented in `docs/lockout-manual-test.md`)
 
 **Demo:** A button in the main window triggers a 10-second lockout. You cannot click, type, or `Alt+F4` out of it. It counts down and dismisses itself.
 
