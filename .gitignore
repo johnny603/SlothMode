@@ -17,3 +17,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Maven Wrapper: do not commit the jar
+.mvn/wrapper/maven-wrapper.jar
