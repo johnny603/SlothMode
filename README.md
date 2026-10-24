@@ -1,4 +1,4 @@
-# SlothMode
+# SlothMode 🦥
 
 > Let the sloth take the wheel. You've earned a nap.
 
@@ -32,6 +32,73 @@ SlothMode is designed so that **the open pieces are what make it work**, not a n
 | **Save-work safeguard** | Before the lockout, a local check snapshots open documents, prompts to save, and logs your context so you can resume exactly where you left off. |
 | **Calendar-synced breaks** | Breaks are read from a local `.ics` file. Manual breaks added in-app are **written back to your calendar**. |
 | **Gamified rest rewards** | You earn points for *completing breaks*, not for working more. Points unlock cosmetic sloth upgrades — hats, hammocks, ambient soundscapes. No streaks, no leaderboards, nothing to lose. |
+
+---
+
+## Status
+
+**M0 complete — the scaffold runs.** SlothMode launches, reads its local config, writes logs, and shows its idle window. The lockout overlay, session state machine, calendar layer, model integration, and rewards system are next; the roadmap tracks them milestone by milestone.
+
+See [ROADMAP.md](ROADMAP.md) for the build order. M0 is closed; M1 (the lockout overlay) is the next milestone.
+
+---
+
+## Getting started
+
+**Requires:** JDK 21 ([Temurin](https://adoptium.net/) recommended) and Maven 3.9+.
+
+Verify your toolchain:
+
+```bash
+java -version   # should print 21
+mvn -version    # should print 3.9.x
+```
+
+Clone and run:
+
+```bash
+git clone https://github.com/johnny603/SlothMode.git
+cd SlothMode
+mvn javafx:run
+```
+
+You should see a window with a sloth 🦥 and the line **"SlothMode is idle"**. The first run creates `~/.slothmode/` with a default `config.toml` and a log file.
+
+Run the tests:
+
+```bash
+mvn verify
+```
+
+### Where SlothMode stores data
+
+On first run, SlothMode creates:
+
+```
+~/.slothmode/
+├── config.toml      ← hand-editable
+├── logs/            ← local, never uploaded
+├── data/            ← session history (reserved for M3)
+└── calendar/        ← your .ics lives here by default
+```
+
+Delete `~/.slothmode/` to reset. Nothing leaves your machine.
+
+### The config file
+
+`~/.slothmode/config.toml` looks like this after first run:
+
+```toml
+calendar.path = /Users/you/.slothmode/calendar/slothmode.ics
+lockout.mode = fullscreen
+model.name = llama3.2:3b
+```
+
+- `calendar.path` — where your breaks live. A local `.ics` file; your calendar app can open it.
+- `lockout.mode` — `fullscreen` (undismissable overlay) or `gentle` (toast nudge).
+- `model.name` — any open-weight model you've pulled with `ollama pull`.
+
+> **Note on the model:** M0 doesn't call the model yet. The Ollama integration lands in M5; until then the field is read but unused.
 
 ---
 
@@ -117,32 +184,6 @@ If the write fails, the Memento restores the `.ics` byte-for-byte — observers 
 
 ---
 
-## Status
-
-**Early scaffold.** This repo currently contains the README and the architecture. The next commits will land the interface stubs for each pattern, then the local model harness, then the calendar `.ics` layer.
-
-See [ROADMAP.md](ROADMAP.md) for the planned build order.
-
----
-
-## Getting started (once code lands)
-
-> _Placeholder — update when the first runnable version ships._
-
-```bash
-# Clone
-git clone https://github.com/johnny603/SlothMode.git
-cd SlothMode
-
-# Pull a small open-weight model
-ollama pull llama3.2:3b
-
-# Run
-./slothmode --calendar ~/calendar/slothmode.ics
-```
-
----
-
 ## Design decisions
 
 - **Local `.ics`, not a database.** The calendar is the API. Your breaks survive a SlothMode uninstall, and they work with whatever calendar app you already use.
@@ -157,6 +198,8 @@ ollama pull llama3.2:3b
 Fork it. The pluggable seams are `BreakSource` (calendar backend), `ModelFactory` (model backend), `BreakStrategy` (reward math), and `MergeStrategy` (calendar conflict policy). If you want a different behavior, implement one of those — you shouldn't need to touch the session core.
 
 Open an issue before a large PR so we can talk about which seam it belongs behind.
+
+The [ROADMAP](ROADMAP.md) lists every milestone with a demoable artifact. M0 is closed; M1 (lockout overlay) is the riskiest piece and the natural next place to help.
 
 ---
 
