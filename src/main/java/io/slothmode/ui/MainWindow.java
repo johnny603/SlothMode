@@ -1,7 +1,11 @@
 package io.slothmode.ui;
 
 import io.slothmode.config.SlothConfig;
+import io.slothmode.lockout.FullscreenLockout;
+import io.slothmode.lockout.GentleNudgeLockout;
+import io.slothmode.lockout.LockoutAbstraction;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -29,7 +33,19 @@ public final class MainWindow {
                 "Model:    " + config.modelName());
         detail.setStyle("-fx-font-size: 12px; -fx-text-fill: #666;");
 
-        VBox root = new VBox(16, sloth, status, detail);
+        Button trigger = new Button("Take a 10-second break");
+        trigger.setOnAction(e -> {
+            LockoutAbstraction lockout = new LockoutAbstraction(
+                    "gentle".equalsIgnoreCase(config.lockoutMode())
+                            ? new GentleNudgeLockout()
+                            : new FullscreenLockout()
+            );
+            // Run off the FX thread so the main window stays responsive
+            // while the lockout blocks.
+            new Thread(() -> lockout.enforce(10), "lockout-thread").start();
+        });
+
+        VBox root = new VBox(16, sloth, status, detail, trigger);
         root.setStyle("-fx-alignment: center; -fx-padding: 32; -fx-background-color: #f5f1e8;");
 
         Scene scene = new Scene(root, 520, 360);
