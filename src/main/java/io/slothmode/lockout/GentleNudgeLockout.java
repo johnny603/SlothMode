@@ -94,4 +94,9 @@ public final class GentleNudgeLockout implements LockoutImplementor {
             }
         });
     }
+
+    @Override
+    public boolean wasSkipped() {
+        return false;
+    }
 }

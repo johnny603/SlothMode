@@ -20,16 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 
-/**
- * Fullscreen, undismissable, calm overlay.
- *
- * - No window decorations, no close button.
- * - Full-screen exit key combination set to NO_MATCH, hint blank.
- * - Always on top.
- * - Escape hatch: hold the ESCAPE key for 5 seconds to dismiss and log a
- *   skipped break. This is deliberate: forcing a break must not trap a
- *   user in an emergency.
- */
 public final class FullscreenLockout implements LockoutImplementor {
 
     private static final Logger log = LoggerFactory.getLogger(FullscreenLockout.class);
@@ -38,9 +28,11 @@ public final class FullscreenLockout implements LockoutImplementor {
     private volatile Stage stage;
     private volatile CountdownRing ring;
     private volatile CountDownLatch completed;
+    private volatile boolean skipped;
 
     @Override
     public void present(int durationSeconds) {
+        this.skipped = false;
         CountDownLatch latch = new CountDownLatch(1);
         this.completed = latch;
 
@@ -51,7 +43,7 @@ public final class FullscreenLockout implements LockoutImplementor {
             Label sloth = new Label("🦥");
             sloth.setStyle("-fx-font-size: 120px;");
 
-            Label message = new Label("You're on a break.");
+            Label message = new Label("You are on a break.");
             message.setStyle("-fx-font-size: 24px; -fx-text-fill: #333;");
 
             Label hint = new Label("Hold ESC for 5 seconds if this is an emergency.");
@@ -70,7 +62,6 @@ public final class FullscreenLockout implements LockoutImplementor {
                 scene.getStylesheets().add(css.toExternalForm());
             }
 
-            // Undismissable: no full-screen exit, no decorations, no close.
             s.initStyle(StageStyle.UNDECORATED);
             s.setFullScreenExitHint("");
             s.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -79,7 +70,6 @@ public final class FullscreenLockout implements LockoutImplementor {
             s.setFullScreen(true);
             s.setOnCloseRequest(WindowEvent::consume);
 
-            // Escape hatch: hold ESC for 5 seconds → dismiss as "skipped".
             installEscapeHatch(scene, s);
 
             s.setScene(scene);
@@ -87,11 +77,7 @@ public final class FullscreenLockout implements LockoutImplementor {
             this.stage = s;
 
             countdown.start();
-            countdown.sceneProperty().addListener((obs, o, n) -> {
-                if (n == null) { /* ignore */ }
-            });
 
-            // Dismiss when the countdown finishes.
             Timeline watcher = new Timeline(new KeyFrame(Duration.millis(250), e -> {
                 if (countdown.isFinished()) {
                     log.info("Break completed after {}s", durationSeconds);
@@ -111,7 +97,6 @@ public final class FullscreenLockout implements LockoutImplementor {
     }
 
     private void installEscapeHatch(Scene scene, Stage s) {
-        // We use a JavaFX Timeline to measure a 5-second hold.
         final Timeline[] holdTimer = new Timeline[1];
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
@@ -122,6 +107,7 @@ public final class FullscreenLockout implements LockoutImplementor {
                         Duration.seconds(ESCAPE_HATCH_SECONDS),
                         e -> {
                             log.warn("Escape hatch fired — break skipped after {}s hold", ESCAPE_HATCH_SECONDS);
+                            skipped = true;
                             dismiss();
                         }
                 ));
@@ -151,5 +137,10 @@ public final class FullscreenLockout implements LockoutImplementor {
                 latch.countDown();
             }
         });
+    }
+
+    @Override
+    public boolean wasSkipped() {
+        return skipped;
     }
 }

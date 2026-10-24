@@ -19,4 +19,8 @@ public interface LockoutImplementor {
 
     /** Hide the lockout UI, if visible. Idempotent. */
     void dismiss();
+
+    /** True if the escape hatch fired during the most recent present(). */
+    boolean wasSkipped();
+
 }

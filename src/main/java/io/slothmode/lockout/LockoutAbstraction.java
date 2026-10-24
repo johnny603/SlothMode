@@ -34,4 +34,9 @@ public final class LockoutAbstraction {
     public void release() {
         implementor.dismiss();
     }
+
+    /** True if the most recent enforce() call was skipped via the escape hatch. */
+    public boolean wasSkipped() {
+        return implementor.wasSkipped();
+    }
 }

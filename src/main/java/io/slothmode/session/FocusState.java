@@ -25,6 +25,13 @@ public final class FocusState implements SessionState {
 
     @Override
     public void onEnter(SessionContext ctx) {
+        if (ctx.remainingSeconds() == 0) {
+            ctx.setRemainingSeconds(ctx.config().focusSeconds());
+        }
+        if (ctx.remainingSeconds() <= 0) {
+            throw new IllegalStateException(
+                    "FocusState entered with remainingSeconds=" + ctx.remainingSeconds());
+        }
         log.info("Focus session started: {}s", ctx.remainingSeconds());
     }
 
@@ -36,7 +43,7 @@ public final class FocusState implements SessionState {
             ctx.transitionTo(LockoutState.instance());
         } else {
             ctx.setRemainingSeconds(next);
-            ctx.notifyTick(this);   // <-- notify without re-entering
+            ctx.notifyTick(this);
         }
     }
 

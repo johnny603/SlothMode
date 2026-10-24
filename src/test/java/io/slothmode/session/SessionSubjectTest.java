@@ -27,9 +27,9 @@ class SessionSubjectTest {
         subject.attach((o, n) -> calls.add("A:" + n.name()));
         subject.attach((o, n) -> calls.add("B:" + n.name()));
 
-        subject.notifyStateChanged(new IdleState(), new FocusState(5));
+        subject.notifyStateChanged(IdleState.instance(), FocusState.instance());
 
-        assertThat(calls).containsExactly("A:Focus(5s)", "B:Focus(5s)");
+        assertThat(calls).containsExactly("A:Focus", "B:Focus");
     }
 
     @Test
@@ -39,7 +39,7 @@ class SessionSubjectTest {
         subject.attach((o, n) -> { throw new RuntimeException("boom"); });
         subject.attach((o, n) -> calls.add("survived"));
 
-        subject.notifyStateChanged(new IdleState(), new FocusState(5));
+        subject.notifyStateChanged(IdleState.instance(), FocusState.instance());
 
         assertThat(calls).containsExactly("survived");
     }

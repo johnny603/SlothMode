@@ -10,10 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * MEDIATOR: coordinates the timer, the state machine, and the observers.
- *
- * The UI never talks to the states directly. It talks to the hub:
- * "start", "cancel", "query". The hub decides which state method to call.
- * Colleagues (SessionContext, SessionSubject) never reference each other.
  */
 public final class SessionHub implements AutoCloseable {
 
@@ -33,7 +29,6 @@ public final class SessionHub implements AutoCloseable {
         });
     }
 
-    /** Begin a focus session. No-op if already running. */
     public synchronized void start() {
         if (running) {
             log.debug("Session already running");
@@ -47,7 +42,6 @@ public final class SessionHub implements AutoCloseable {
         scheduleTicker();
     }
 
-    /** Cancel a focus session. No-op if not in Focus. */
     public synchronized void cancel() {
         SessionState state = context.current();
         if (state instanceof FocusState focus) {
@@ -57,16 +51,17 @@ public final class SessionHub implements AutoCloseable {
         running = false;
     }
 
-    /** Internal tick — called once per second while a session is active. */
     private void tick() {
         SessionState state = context.current();
         try {
             if (state instanceof FocusState focus) {
                 focus.tick(context);
-            } else if (state instanceof LockoutState) {
-                // LockoutState.onEnter blocks until dismissal, so by the time we tick,
-                // breakCompleted has already fired and we are in RewardState.
-                // Nothing to do — the state transition already happened.
+            } else if (state instanceof LockoutState lockout) {
+                if (context.lockout().wasSkipped()) {
+                    lockout.breakSkipped(context);
+                } else {
+                    lockout.breakCompleted(context);
+                }
             } else if (state instanceof RewardState reward) {
                 reward.finish(context);
                 stopTicker();
