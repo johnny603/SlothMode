@@ -201,7 +201,7 @@ The scariest pieces are already scheduled first (M1 overlay, M4 calendar round-t
 | Milestone | Status | Target |
 |---|---|---|
 | M0 — Scaffold | [x] | Week 1 |
-| M1 — Lockout overlay | [~] | Week 2 |
+| M1 — Lockout overlay | [x] | Week 2 |
 | M2 — State machine | [~] | Week 3 |
 | M3 — Command + Memento | [~] | Week 4 |
 | M4 — Calendar layer | [~] | Week 5–6 |
