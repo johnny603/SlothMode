@@ -45,7 +45,7 @@ See [ROADMAP.md](ROADMAP.md) for the build order. M0 is closed; M1 (the lockout 
 
 ## Getting started
 
-**Requires:** JDK 21 ([Temurin](https://adoptium.net/) recommended) and Maven 3.9+.
+**Requires:** JDK 21 ([Temurin](https://adoptium.net/) recommended). Maven is bundled via the Maven Wrapper — no separate install needed.
 
 Verify your toolchain:
 
@@ -59,15 +59,17 @@ Clone and run:
 ```bash
 git clone https://github.com/johnny603/SlothMode.git
 cd SlothMode
-mvn javafx:run
+./mvnw javafx:run
 ```
 
 You should see a window with a sloth 🦥 and the line **"SlothMode is idle"**. The first run creates `~/.slothmode/` with a default `config.toml` and a log file.
 
+> **Windows:** use `mvnw.cmd` instead of `./mvnw` in the commands above.
+
 Run the tests:
 
 ```bash
-mvn verify
+./mvnw verify
 ```
 
 ### Where SlothMode stores data

@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - JDK 21 (Temurin recommended): https://adoptium.net/
-- Maven 3.9+: https://maven.apache.org/download.cgi
+- Maven is bundled via the Maven Wrapper — no separate install.
 
 Verify:
 ```bash
