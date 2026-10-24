@@ -60,13 +60,13 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 **Goal:** The session lifecycle exists as explicit objects, not if-else spaghetti.
 
-- [ ] `SessionState` as a **sealed interface** (Java 21) — only `Idle`, `Focus`, `Lockout`, `Reward` can implement it
-- [ ] `SessionContext` — holds the current state, delegates to it
-- [ ] Transitions: `Idle → Focus` (start), `Focus → Lockout` (timer fires), `Lockout → Reward` (break completed), `Reward → Idle` (points awarded)
-- [ ] `SessionSubject` (OBSERVER Subject) — `Attach`, `Detach`, `Notify`
-- [ ] `SessionHub` (MEDIATOR) — coordinates the timer, the overlay, and the state machine without them knowing each other
-- [ ] `SessionStateTest` — every legal transition, every illegal transition throws
-- [ ] `SessionHubTest` (Mockito) — hub notifies the right observer on each transition
+- [x] `SessionState` as a **sealed interface** (Java 21) — only `Idle`, `Focus`, `Lockout`, `Reward` can implement it
+- [x] `SessionContext` — holds the current state, delegates to it
+- [x] Transitions: `Idle → Focus` (start), `Focus → Lockout` (timer fires), `Lockout → Reward` (break completed), `Reward → Idle` (points awarded)
+- [x] `SessionSubject` (OBSERVER Subject) — `Attach`, `Detach`, `Notify`
+- [x] `SessionHub` (MEDIATOR) — coordinates the timer, the overlay, and the state machine without them knowing each other
+- [x] `SessionStateTest` — every legal transition, every illegal transition throws
+- [x] `SessionHubTest` (Mockito) — hub notifies the right observer on each transition
 
 **Demo:** Start a focus session, watch it move Focus → Lockout → Reward → Idle in real time in the UI.
 
@@ -202,7 +202,7 @@ The scariest pieces are already scheduled first (M1 overlay, M4 calendar round-t
 |---|---|---|
 | M0 — Scaffold | [x] | Week 1 |
 | M1 — Lockout overlay | [x] | Week 2 |
-| M2 — State machine | [~] | Week 3 |
+| M2 — State machine | [x] | Week 3 |
 | M3 — Command + Memento | [~] | Week 4 |
 | M4 — Calendar layer | [~] | Week 5–6 |
 | M5 — Model layer | [ ] | Week 7 |
