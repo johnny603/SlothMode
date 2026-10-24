@@ -1,0 +1,19 @@
+# Build
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SlothMode runtime data (never commit a user's calendar or logs)
+.slothmode/
+
+# Logs
+*.log
