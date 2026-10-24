@@ -24,13 +24,13 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 **Goal:** A runnable JavaFX app that opens a window and logs a heartbeat. Nothing clever.
 
-- [ ] `pom.xml` with Java 21, JavaFX 21, JUnit 5, AssertJ, Mockito, Logback
-- [ ] `SlothModeApp` (FACADE) — the single `main` entry point
-- [ ] `ConfigManager` (SINGLETON) — loads `~/.slothmode/config.toml`, creates the dir if missing
-- [ ] Logback config writing to `~/.slothmode/logs/slothmode.log`
-- [ ] GitHub Actions: `mvn verify` on push (JDK 21, Temurin)
-- [ ] `LICENSE` (MIT) committed
-- [ ] README "Getting started" updated to real commands
+- [x] `pom.xml` with Java 21, JavaFX 21, JUnit 5, AssertJ, Mockito, Logback
+- [x] `SlothModeApp` (FACADE) — the single `main` entry point
+- [x] `ConfigManager` (SINGLETON) — loads `~/.slothmode/config.toml`, creates the dir if missing
+- [x] Logback config writing to `~/.slothmode/logs/slothmode.log`
+- [x] GitHub Actions: `mvn verify` on push (JDK 21, Temurin)
+- [x] `LICENSE` (MIT) committed
+- [x] README "Getting started" updated to real commands
 
 **Demo:** `mvn javafx:run` opens a window with a sloth emoji and a "SlothMode is idle" label.
 
