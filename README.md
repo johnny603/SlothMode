@@ -119,7 +119,7 @@ If the write fails, the Memento restores the `.ics` byte-for-byte — observers 
 
 ## Status
 
-🚧 **Early scaffold.** This repo currently contains the README and the architecture. The next commits will land the interface stubs for each pattern, then the local model harness, then the calendar `.ics` layer.
+**Early scaffold.** This repo currently contains the README and the architecture. The next commits will land the interface stubs for each pattern, then the local model harness, then the calendar `.ics` layer.
 
 See [ROADMAP.md](ROADMAP.md) for the planned build order.
 
