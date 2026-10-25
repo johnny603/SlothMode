@@ -20,8 +20,8 @@ class SlothConfigTest {
 
     @Test
     void records_withSameValuesAreEqual() {
-        SlothConfig a = new SlothConfig("/c.ics", "fullscreen", "llama3.2:3b", "ollama", Paths.get("/m.gguf"));
-        SlothConfig b = new SlothConfig("/c.ics", "fullscreen", "llama3.2:3b", "ollama", Paths.get("/m.gguf"));
+        SlothConfig a = new SlothConfig("/c.ics", "local", "/url", "fullscreen", "llama3.2:3b", "ollama", Paths.get("/m.gguf"));
+        SlothConfig b = new SlothConfig("/c.ics", "local", "/url", "fullscreen", "llama3.2:3b", "ollama", Paths.get("/m.gguf"));
         assertThat(a).isEqualTo(b);
         assertThat(a.hashCode()).isEqualTo(b.hashCode());
     }

@@ -62,7 +62,7 @@ public final class MainWindow {
         status.setStyle("-fx-font-size: 18px;");
 
         Label detail = new Label(
-                "Calendar: " + config.calendarPath() + "\n" +
+                "Calendar: " + config.calendarPath() + " (" + config.calendarSource() + ")" + "\n" +
                 "Lockout:  " + config.lockoutMode() + "\n" +
                 "Model:    " + config.modelName() + "\n" +
                 "Breaks:   " + breakRepository.breaks().size() + " from " + breakRepository.source().name());

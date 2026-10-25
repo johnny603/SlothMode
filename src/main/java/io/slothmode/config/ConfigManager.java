@@ -15,6 +15,7 @@ public final class ConfigManager {
     private static final Logger log = LoggerFactory.getLogger(ConfigManager.class);
     private static final String SLOTHMODE_DIR = ".slothmode";
     private static final String CONFIG_FILE = "config.toml";
+    private static final String CREDS_FILE = "data/caldav-credentials";
 
     private static ConfigManager instance;
     private final Path homeDir;
@@ -50,6 +51,8 @@ public final class ConfigManager {
             SlothConfig defaults = SlothConfig.defaults(homeDir.toString());
             return new SlothConfig(
                     props.getProperty("calendar.path", defaults.calendarPath()),
+                    props.getProperty("calendar.source", defaults.calendarSource()),
+                    props.getProperty("calendar.url", defaults.calendarUrl()),
                     props.getProperty("lockout.mode", defaults.lockoutMode()),
                     props.getProperty("model.name", defaults.modelName()),
                     props.getProperty("model.type", defaults.modelType()),
@@ -81,17 +84,26 @@ public final class ConfigManager {
             SlothConfig defaults = SlothConfig.defaults(homeDir.toString());
             String content = """
                     calendar.path = %s
+                    calendar.source = %s
+                    calendar.url =
                     lockout.mode = %s
                     model.name = %s
                     model.type = %s
                     model.path =
                     """.formatted(
                     defaults.calendarPath(),
+                    defaults.calendarSource(),
                     defaults.lockoutMode(),
-                    defaults.lockoutMode(),
+                    defaults.modelName(),
                     defaults.modelType());
             Files.writeString(configPath, content);
             log.info("Created default config at {}", configPath);
+
+            // Initialize credentials file
+            Path credsPath = homeDir.resolve(SLOTHMODE_DIR).resolve(CREDS_FILE);
+            Files.writeString(credsPath, "user:password\n");
+            log.info("Created CalDAV credentials placeholder at {}. Please edit this file with your user:password.", credsPath);
+
             return defaults;
         } catch (IOException e) {
             log.error("Could not create default config at {}", configPath, e);

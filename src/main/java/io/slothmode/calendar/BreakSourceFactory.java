@@ -6,15 +6,22 @@ import java.nio.file.Paths;
 
 /**
  * ABSTRACT FACTORY: picks the right BreakSource for the user's config.
- *
- * For M4, the choice is based on whether calendar.path is set.
- * Real CalDAV / Google Calendar support lands in M7+.
  */
 public final class BreakSourceFactory {
 
     private BreakSourceFactory() {}
 
     public static BreakSource fromConfig(SlothConfig config) {
-        return new CalendarSource(Paths.get(config.calendarPath()));
+        String source = config.calendarSource();
+        String home = System.getProperty("user.home");
+        java.nio.file.Path credsPath = Paths.get(home, ".slothmode", "data", "caldav-credentials");
+
+        if (source == null || source.isEmpty() || "local".equals(source)) {
+            return new CalendarSource(Paths.get(config.calendarPath()));
+        }
+        if ("caldav".equals(source)) {
+            return new CalDAVSource(config.calendarUrl(), credsPath);
+        }
+        throw new IllegalArgumentException("unknown calendar.source: " + source);
     }
 }
