@@ -1,11 +1,15 @@
 package io.slothmode.session;
 
+import io.slothmode.command.SaveWorkCommand;
 import io.slothmode.lockout.LockoutAbstraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * STATE: the break is being enforced. Singleton.
+ *
+ * Before the overlay is shown, a SaveWorkCommand snapshots the open
+ * documents so they can be restored after (or on undo).
  */
 public final class LockoutState implements SessionState {
 
@@ -26,6 +30,10 @@ public final class LockoutState implements SessionState {
     @Override
     public void onEnter(SessionContext ctx) {
         int duration = ctx.config().lockoutSeconds();
+
+        // COMMAND + MEMENTO: snapshot open documents before the break.
+        ctx.commandHistory().execute(new SaveWorkCommand(ctx.documentRegistry()));
+
         log.info("Lockout started: {}s", duration);
         LockoutAbstraction lockout = ctx.lockout();
         lockout.enforce(duration);
