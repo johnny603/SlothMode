@@ -166,7 +166,7 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 Not in the first release. Tracked so contributors know where the seams are.
 
-- [ ] `CalDAVSource` (ConcreteFactory) — Nextcloud, Fastmail
+- [x] `CalDAVSource` (ConcreteFactory) — Nextcloud, Fastmail
 - [ ] `GoogleCalendarSource` — *only* if the user explicitly opts in; must remain local-file-first
 - [x] `LlamaCppModel` real implementation (raw `llama.cpp` bindings)
 - [ ] Ambient soundscape generator via a second open-weight audio model
