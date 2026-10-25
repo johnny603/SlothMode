@@ -4,6 +4,11 @@
 
 **SlothMode is a local-first AI productivity companion that enforces breaks for you — so you don't have to.**
 
+## Download
+Download the latest release for macOS, Windows, or Linux — no Java install required.
+[Visit GitHub Releases](https://github.com/johnny603/SlothMode/releases)
+
+
 It tracks your focus sessions, locks you out when you've been going too hard, and saves your work before the break hits. Breaks live in **your** calendar (a local `.ics` file), not a server. Rewards are low-stakes, offline, and earned for *resting* — not for grinding.
 
 Built as an open-source response to the "Slow and Steady" build theme: open-weight models, local inference, and a calendar that belongs to you.
@@ -45,7 +50,13 @@ See [ROADMAP.md](ROADMAP.md) for the build order. M0 is closed; M1 (the lockout 
 
 ## Getting started
 
-**Requires:** JDK 21 ([Temurin](https://adoptium.net/) recommended). Maven is bundled via the Maven Wrapper — no separate install needed.
+**Installer flow (Recommended):**
+- **macOS:** Download .dmg, right-click → Open, drag to Applications.
+- **Windows:** Download .msi, double-click, "More info" → "Run anyway".
+- **Linux:** Download .deb, `sudo dpkg -i`.
+
+**Developer flow:**
+Requires: JDK 21 ([Temurin](https://adoptium.net/) recommended). Maven is bundled via the Maven Wrapper — no separate install needed.
 
 Verify your toolchain:
 
@@ -81,7 +92,8 @@ On first run, SlothMode creates:
 ├── config.toml      ← hand-editable
 ├── logs/            ← local, never uploaded
 ├── data/            ← session history (reserved for M3)
-└── calendar/        ← your .ics lives here by default
+├── calendar/        ← your .ics lives here by default
+└── plugins/        ← extension points (reserved for M8)
 ```
 
 Delete `~/.slothmode/` to reset. Nothing leaves your machine.
