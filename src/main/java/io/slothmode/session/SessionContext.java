@@ -71,6 +71,8 @@ public final class SessionContext {
         subject.notifyStateChanged(previous, next);
     }
 
+    public void setPoints(int value) { this.points = value; }
+
     void notifyTick(SessionState state) {
         subject.notifyStateChanged(state, state);
     }

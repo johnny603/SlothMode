@@ -24,12 +24,11 @@ public final class RewardState implements SessionState {
 
     @Override
     public void onEnter(SessionContext ctx) {
-        int awarded = ctx.pendingPoints();
-        if (awarded == Integer.MIN_VALUE) {
-            awarded = ctx.config().pointsPerBreak();   // default award
-        }
-        log.info("Awarding {} points", awarded);
-        ctx.addPoints(awarded);
+        int delta = ctx.pendingPoints() == Integer.MIN_VALUE
+                ? ctx.config().pointsPerBreak()
+                : ctx.pendingPoints();
+        ctx.commandHistory().execute(new io.slothmode.reward.AwardRewardCommand(ctx, delta));
+        log.info("Awarding {} points", delta);
     }
 
     public void finish(SessionContext ctx) {
