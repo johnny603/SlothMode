@@ -168,7 +168,7 @@ Not in the first release. Tracked so contributors know where the seams are.
 
 - [ ] `CalDAVSource` (ConcreteFactory) — Nextcloud, Fastmail
 - [ ] `GoogleCalendarSource` — *only* if the user explicitly opts in; must remain local-file-first
-- [ ] `LlamaCppModel` real implementation (raw `llama.cpp` bindings)
+- [x] `LlamaCppModel` real implementation (raw `llama.cpp` bindings)
 - [ ] Ambient soundscape generator via a second open-weight audio model
 - [ ] "Sloth companion" ASCII/JavaFX animation that reacts to session state
 - [ ] Plugin API — third-party `BreakSource` and `BreakStrategy` loaded from a `~/.slothmode/plugins/` dir
