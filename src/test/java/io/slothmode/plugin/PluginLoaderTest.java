@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Stream;
 
@@ -59,6 +60,11 @@ class PluginLoaderTest {
         Path classesDir = tempDir.resolve("fixture-classes");
         Files.createDirectories(srcDir);
         Files.createDirectories(classesDir);
+        // IMPORTANT: canonicalize so Files.walk() and relativize() agree.
+        // On macOS @TempDir is /var/folders/... which is a symlink to
+        // /private/var/folders/...; without toRealPath() the jar entries
+        // become "../private/var/..." and the classloader can't find them.
+        classesDir = classesDir.toRealPath();
 
         Path breakSourceFile = srcDir.resolve(sourceClass + ".java");
         Path pluginFile = srcDir.resolve(pluginClass + ".java");
@@ -77,22 +83,19 @@ class PluginLoaderTest {
                 pluginFile.toString());
         assertThat(rc).as("fixture compilation exit code").isZero();
 
-        Path pluginClassFile = classesDir.resolve(pkg.replace('.', '/'))
-                .resolve(pluginClass + ".class");
-        Path sourceClassFile = classesDir.resolve(pkg.replace('.', '/'))
-                .resolve(sourceClass + ".class");
-        assertThat(pluginClassFile).as("compiled FixturePlugin class").exists();
-        assertThat(sourceClassFile).as("compiled FixtureBreakSource class").exists();
+        // Collect every .class emitted by the compiler (canonical root).
+        List<Path> emitted;
+        try (Stream<Path> walk = Files.walk(classesDir)) {
+            emitted = walk.filter(p -> p.toString().endsWith(".class")).toList();
+        }
+        assertThat(emitted)
+                .as("javac must emit at least FixturePlugin and FixtureBreakSource")
+                .hasSizeGreaterThanOrEqualTo(2);
 
         Path jar = pluginsDir.resolve("fixture-plugin.jar");
         try (OutputStream fos = Files.newOutputStream(jar);
              JarOutputStream jos = new JarOutputStream(fos)) {
 
-            // Jar every .class file the compiler emitted.
-            List<Path> emitted;
-            try (Stream<Path> walk = Files.walk(classesDir)) {
-                emitted = walk.filter(p -> p.toString().endsWith(".class")).toList();
-            }
             for (Path cls : emitted) {
                 String entryName = classesDir.relativize(cls).toString().replace('\\', '/');
                 jos.putNextEntry(new JarEntry(entryName));
@@ -104,6 +107,17 @@ class PluginLoaderTest {
             jos.write((pkg + "." + pluginClass + "\n").getBytes(StandardCharsets.UTF_8));
             jos.closeEntry();
         }
+
+        // Sanity check: jar must contain both classes. If this fails, the
+        // assertion message names the missing entry, so we don't chase ghosts.
+        try (JarFile jf = new JarFile(jar.toFile())) {
+            List<String> names = jf.stream().map(JarEntry::getName).toList();
+            assertThat(names)
+                    .as("jar entries: %s", names)
+                    .anyMatch(n -> n.endsWith(pluginClass + ".class"))
+                    .anyMatch(n -> n.endsWith(sourceClass + ".class"));
+        }
+
         return jar;
     }
 
