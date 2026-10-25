@@ -53,6 +53,12 @@ public final class CommandHistory {
     }
 
     // ITERATOR traversal over the executed commands.
+    public List<String> events() {
+        List<String> out = new ArrayList<>();
+        for (Command c : commands) out.add(c.name());
+        return out;
+    }
+
     public int size() { return commands.size(); }
     public Command get(int index) { return commands.get(index); }
 }
