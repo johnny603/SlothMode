@@ -116,14 +116,14 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 **Goal:** Local open-weight inference, swapable, with a mock for tests.
 
-- [ ] `ModelFactory` (ABSTRACT FACTORY) — `CreateModel()`, `CreateAgent()`
-- [ ] `OllamaModel` (ConcreteProduct) using `ollama4j` — wraps `llama3.2:3b`
-- [ ] `MockModel` (ConcreteProduct) — returns canned responses; used in every test
-- [ ] `LlamaCppModel` (stub ConcreteProduct) — proves the factory seam works; not implemented in v0
-- [ ] First real use: `SessionSummaryAgent` — reads the `EventIterator` (ITERATOR) and asks the local model for a two-line morning digest
-- [ ] `EventVisitor` (VISITOR) — `VisitBreak`, `VisitFocus`, `VisitReward`; `SummaryVisitor` is the first concrete visitor
-- [ ] `ModelFactoryTest` — `MockModel` is returned in tests, `OllamaModel` is returned in production
-- [ ] `SummaryVisitorTest` — canned events → expected digest text (with `MockModel`)
+- [x] `ModelFactory` (ABSTRACT FACTORY) — `CreateModel()`, `CreateAgent()`
+- [x] `OllamaModel` (ConcreteProduct) using `ollama4j` — wraps `llama3.2:3b`
+- [x] `MockModel` (ConcreteProduct) — returns canned responses; used in every test
+- [x] `LlamaCppModel` (stub ConcreteProduct) — proves the factory seam works; not implemented in v0
+- [x] First real use: `SessionSummaryAgent` — reads the `EventIterator` (ITERATOR) and asks the local model for a two-line morning digest
+- [x] `EventVisitor` (VISITOR) — `VisitBreak`, `VisitFocus`, `VisitReward`; `SummaryVisitor` is the first concrete visitor
+- [x] `ModelFactoryTest` — `MockModel` is returned in tests, `OllamaModel` is returned in production
+- [x] `SummaryVisitorTest` — canned events → expected digest text (with `MockModel`)
 
 **Demo:** Run a focus session, trigger 3 breaks, click "morning digest" → two lines of calm text generated locally.
 
@@ -205,7 +205,7 @@ The scariest pieces are already scheduled first (M1 overlay, M4 calendar round-t
 | M2 — State machine | [x] | Week 3 |
 | M3 — Command + Memento | [x] | Week 4 |
 | M4 — Calendar layer | [x] | Week 5–6 |
-| M5 — Model layer | [~] | Week 7 |
+| M5 — Model layer | [x] | Week 7 |
 | M6 — Rewards | [~] | Week 8 |
-| M7 — Packaging | [ ] | Week 9 |
-| M8 — Stretch | [ ] | post-v0 |
+| M7 — Packaging | [~] | Week 9 |
+| M8 — Stretch | [~] | post-v0 |
