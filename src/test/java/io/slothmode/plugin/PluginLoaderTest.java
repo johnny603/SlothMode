@@ -14,7 +14,6 @@ import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,9 +30,8 @@ class PluginLoaderTest {
         String sourceClass = "FixtureBreakSource";
 
         // Two top-level classes, no anonymous/inner classes:
-        //   FixtureBreakSource  — a named BreakSource implementation
-        //   FixturePlugin       — the SlothPlugin that returns it
-        // This avoids FixturePlugin$1.class entirely.
+        //   FixtureBreakSource — a named BreakSource implementation
+        //   FixturePlugin      — the SlothPlugin that returns it
         String breakSource = "package " + pkg + ";\n"
                 + "import io.slothmode.calendar.BreakSource;\n"
                 + "import io.slothmode.calendar.Break;\n"
@@ -60,11 +58,6 @@ class PluginLoaderTest {
         Path classesDir = tempDir.resolve("fixture-classes");
         Files.createDirectories(srcDir);
         Files.createDirectories(classesDir);
-        // IMPORTANT: canonicalize so Files.walk() and relativize() agree.
-        // On macOS @TempDir is /var/folders/... which is a symlink to
-        // /private/var/folders/...; without toRealPath() the jar entries
-        // become "../private/var/..." and the classloader can't find them.
-        classesDir = classesDir.toRealPath();
 
         Path breakSourceFile = srcDir.resolve(sourceClass + ".java");
         Path pluginFile = srcDir.resolve(pluginClass + ".java");
@@ -83,20 +76,25 @@ class PluginLoaderTest {
                 pluginFile.toString());
         assertThat(rc).as("fixture compilation exit code").isZero();
 
-        // Collect every .class emitted by the compiler (canonical root).
-        List<Path> emitted;
-        try (Stream<Path> walk = Files.walk(classesDir)) {
-            emitted = walk.filter(p -> p.toString().endsWith(".class")).toList();
-        }
-        assertThat(emitted)
-                .as("javac must emit at least FixturePlugin and FixtureBreakSource")
-                .hasSizeGreaterThanOrEqualTo(2);
+        // Explicitly enumerate the expected class files. We deliberately do NOT
+        // use Files.walk(): on macOS @TempDir lives under /var (a symlink to
+        // /private/var), and Files.walk() yields canonical /private/var paths
+        // while classesDir is the /var form — relativize() then produces
+        // "../private/var/..." jar entries and the classloader can't find them.
+        // Constructing the paths from the same classesDir root makes
+        // relativize() always yield "io/slothmode/plugin/test/<Class>.class".
+        Path pluginClassFile = classesDir.resolve(pkg.replace('.', '/'))
+                .resolve(pluginClass + ".class");
+        Path sourceClassFile = classesDir.resolve(pkg.replace('.', '/'))
+                .resolve(sourceClass + ".class");
+        assertThat(pluginClassFile).as("compiled %s", pluginClass).exists();
+        assertThat(sourceClassFile).as("compiled %s", sourceClass).exists();
 
         Path jar = pluginsDir.resolve("fixture-plugin.jar");
         try (OutputStream fos = Files.newOutputStream(jar);
              JarOutputStream jos = new JarOutputStream(fos)) {
 
-            for (Path cls : emitted) {
+            for (Path cls : new Path[]{pluginClassFile, sourceClassFile}) {
                 String entryName = classesDir.relativize(cls).toString().replace('\\', '/');
                 jos.putNextEntry(new JarEntry(entryName));
                 Files.copy(cls, jos);
@@ -108,14 +106,16 @@ class PluginLoaderTest {
             jos.closeEntry();
         }
 
-        // Sanity check: jar must contain both classes. If this fails, the
-        // assertion message names the missing entry, so we don't chase ghosts.
+        // Sanity check: the jar must contain both class entries under the
+        // expected names. If this ever fails, the message names the missing
+        // entry instead of surfacing as a confusing NoClassDefFoundError.
         try (JarFile jf = new JarFile(jar.toFile())) {
             List<String> names = jf.stream().map(JarEntry::getName).toList();
             assertThat(names)
                     .as("jar entries: %s", names)
-                    .anyMatch(n -> n.endsWith(pluginClass + ".class"))
-                    .anyMatch(n -> n.endsWith(sourceClass + ".class"));
+                    .contains(
+                            pkg.replace('.', '/') + "/" + pluginClass + ".class",
+                            pkg.replace('.', '/') + "/" + sourceClass + ".class");
         }
 
         return jar;
