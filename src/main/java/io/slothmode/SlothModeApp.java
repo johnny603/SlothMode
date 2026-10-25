@@ -48,7 +48,7 @@ public class SlothModeApp extends Application {
 
         SystemTray tray = SystemTray.getSystemTray();
         // Placeholder icon: solid green circle
-        Image image = new java.awt.image.BufferedImage(16, 16, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(16, 16, java.awt.image.BufferedImage.TYPE_INT_RGB);
         java.awt.Graphics2D g = image.createGraphics();
         g.setColor(Color.GREEN);
         g.fillOval(0, 0, 16, 16);
