@@ -135,13 +135,13 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 **Goal:** The gamified rewards system, built on DECORATOR + COMPOSITE + STRATEGY.
 
-- [ ] `RewardComponent` (COMPOSITE) — `SlothHat`, `SlothHammock`, `AmbientSoundscape` as leaves; `RewardBundle` as composite
-- [ ] `RewardDecor` (DECORATOR) — adds glow/animation at runtime, no subclass explosion
-- [ ] `BreakStrategy` (STRATEGY) — `FixedPoints`, `GentleSlothPoints` (default); `StreakPoints` exists but is off by default and documented as "not the point"
-- [ ] `AwardRewardCommand` — the reward award is undoable (why not — it's already a Command)
-- [ ] `RewardSystemTest` — a bundle of 2 leaves + 1 decorator renders and sums points correctly
-- [ ] `BreakStrategyTest` — each strategy returns the documented points
-- [ ] README "Rewards" section updated with a screenshot
+- [x] `RewardComponent` (COMPOSITE) — `SlothHat`, `SlothHammock`, `AmbientSoundscape` as leaves; `RewardBundle` as composite
+- [x] `RewardDecor` (DECORATOR) — adds glow/animation at runtime, no subclass explosion
+- [x] `BreakStrategy` (STRATEGY) — `FixedPoints`, `GentleSlothPoints` (default); `StreakPoints` exists but is off by default and documented as "not the point"
+- [x] `AwardRewardCommand` — the reward award is undoable (why not — it's already a Command)
+- [x] `RewardSystemTest` — a bundle of 2 leaves + 1 decorator renders and sums points correctly
+- [x] `BreakStrategyTest` — each strategy returns the documented points
+- [x] README "Rewards" section updated with a screenshot
 
 **Demo:** Complete a break → sloth gets a hat → points increment → no streak pressure, no leaderboard.
 
@@ -206,6 +206,6 @@ The scariest pieces are already scheduled first (M1 overlay, M4 calendar round-t
 | M3 — Command + Memento | [x] | Week 4 |
 | M4 — Calendar layer | [x] | Week 5–6 |
 | M5 — Model layer | [x] | Week 7 |
-| M6 — Rewards | [~] | Week 8 |
+| M6 — Rewards | [x] | Week 8 |
 | M7 — Packaging | [~] | Week 9 |
 | M8 — Stretch | [~] | post-v0 |
