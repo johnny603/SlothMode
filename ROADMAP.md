@@ -76,13 +76,13 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 **Goal:** The undoable, crash-safe command history. This is the piece the README promises: *save work before the lockout hits*.
 
-- [ ] `Command` interface — `Execute`, `Unexecute`, `isReversible`
-- [ ] `Memento` interface — `GetState`, plus a `SaveWorkMemento` record
-- [ ] `SaveWorkCommand` — snapshots open documents (for v0: a stub `DocumentRegistry` that tracks "open files") before the lockout
-- [ ] `LockoutCommand` — wraps the overlay trigger so it's undoable in tests
-- [ ] `CommandHistory` — a `List<Command>` traversed by an **Iterator** (`First`, `Next`, `IsDone`, `CurrentItem`)
-- [ ] `CommandHistoryTest` — execute 3 commands, undo 2, redo 1, verify the history cursor is where the book says it should be (p. 62–64)
-- [ ] `SaveWorkCommandTest` — Execute snapshots, Unexecute restores exactly
+- [x] `Command` interface — `Execute`, `Unexecute`, `isReversible`
+- [x] `Memento` interface — `GetState`, plus a `SaveWorkMemento` record
+- [x] `SaveWorkCommand` — snapshots open documents (for v0: a stub `DocumentRegistry` that tracks "open files") before the lockout
+- [x] `LockoutCommand` — wraps the overlay trigger so it's undoable in tests
+- [x] `CommandHistory` — a `List<Command>` traversed by an **Iterator** (`First`, `Next`, `IsDone`, `CurrentItem`)
+- [x] `CommandHistoryTest` — execute 3 commands, undo 2, redo 1, verify the history cursor is where the book says it should be (p. 62–64)
+- [x] `SaveWorkCommandTest` — Execute snapshots, Unexecute restores exactly
 
 **Demo:** A "simulate lockout" button snapshots the fake document registry, shows the overlay, and undo restores the registry to its pre-lockout state.
 
@@ -203,9 +203,9 @@ The scariest pieces are already scheduled first (M1 overlay, M4 calendar round-t
 | M0 — Scaffold | [x] | Week 1 |
 | M1 — Lockout overlay | [x] | Week 2 |
 | M2 — State machine | [x] | Week 3 |
-| M3 — Command + Memento | [~] | Week 4 |
+| M3 — Command + Memento | [x] | Week 4 |
 | M4 — Calendar layer | [~] | Week 5–6 |
-| M5 — Model layer | [ ] | Week 7 |
-| M6 — Rewards | [ ] | Week 8 |
+| M5 — Model layer | [~] | Week 7 |
+| M6 — Rewards | [~] | Week 8 |
 | M7 — Packaging | [ ] | Week 9 |
 | M8 — Stretch | [ ] | post-v0 |
