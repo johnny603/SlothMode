@@ -48,6 +48,24 @@ See [ROADMAP.md](ROADMAP.md) for the build order. M0 is closed; M1 (the lockout 
 
 ---
 
+### macOS: the first-launch warning
+
+SlothMode is not signed with an Apple Developer ID, so macOS will show:
+
+> "Apple could not verify 'SlothMode' is free of malware..."
+
+This is expected for unsigned apps. The app is fine. To open it:
+
+1. In Finder, **right-click** (or Control-click) `SlothMode.app` → **Open**.
+2. Click **Open** in the dialog. This tells macOS you trust the app.
+3. Future launches are normal double-clicks.
+
+Alternative, from Terminal:
+
+```bash
+xattr -d com.apple.quarantine /Applications/SlothMode.app
+
+
 ## Getting started
 
 **Installer flow (Recommended):**
