@@ -6,15 +6,14 @@ import org.junit.jupiter.api.io.TempDir;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.OutputStream;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,13 +22,6 @@ class PluginLoaderTest {
     @TempDir
     Path tempDir;
 
-    // ---------------------------------------------------------------- helpers
-
-    /**
-     * Compiles a tiny {@link SlothPlugin} impl at test time and jars it with the
-     * matching {@code META-INF/services/} entry, so we exercise the real
-     * ServiceLoader path without adding a build-time dependency.
-     */
     private Path buildFixtureJar(Path pluginsDir, String pluginId) throws Exception {
         Files.createDirectories(pluginsDir);
 
@@ -41,7 +33,7 @@ class PluginLoaderTest {
                 + "import io.slothmode.plugin.SlothPlugin;\n"
                 + "import io.slothmode.calendar.BreakSource;\n"
                 + "import io.slothmode.config.SlothConfig;\n"
-                + "import java.time.LocalDateTime;\n"
+                + "import io.slothmode.calendar.Break;\n"
                 + "import java.util.List;\n"
                 + "public final class " + className + " implements SlothPlugin {\n"
                 + "  public String id() { return \"" + pluginId + "\"; }\n"
@@ -80,20 +72,23 @@ class PluginLoaderTest {
         try (OutputStream fos = Files.newOutputStream(jar);
              JarOutputStream jos = new JarOutputStream(fos)) {
 
-            // class entry
-            jos.putNextEntry(new JarEntry(pkg.replace('.', '/') + "/" + className + ".class"));
-            Files.copy(classFile, jos);
-            jos.closeEntry();
+            // Jar every .class produced by the compiler (includes inner/anonymous classes
+            // such as FixturePlugin$1).
+            try (Stream<Path> classes = Files.walk(classesDir)) {
+                for (Path cls : classes.filter(p -> p.toString().endsWith(".class")).toList()) {
+                    String entryName = classesDir.relativize(cls).toString().replace('\\', '/');
+                    jos.putNextEntry(new JarEntry(entryName));
+                    Files.copy(cls, jos);
+                    jos.closeEntry();
+                }
+            }
 
-            // service entry
             jos.putNextEntry(new JarEntry("META-INF/services/io.slothmode.plugin.SlothPlugin"));
             jos.write((fqcn + "\n").getBytes(StandardCharsets.UTF_8));
             jos.closeEntry();
         }
         return jar;
     }
-
-    // ------------------------------------------------------------------ tests
 
     @Test
     void loadsPluginFromJar() throws Exception {
