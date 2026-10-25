@@ -1,33 +1,28 @@
 package io.slothmode.calendar;
 
-import io.slothmode.session.SessionObserver;
-import io.slothmode.session.SessionSubject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * OBSERVER: caches the merged break list and invalidates on write.
  *
- * The repository is the Subject; the SessionSubject from M2 is a *different*
- * Subject (session state). Here we only fire when the break list changes,
- * and the session observes it directly via {@link SessionSubject}.
- *
- * For M4 simplicity, the repository is also the Subject: it maintains its
- * own observer list of {@link Runnable}s that want "breaks changed" pings.
+ * Observers are notified as Runnables (no args) when the cache is
+ * invalidated. The real {@link io.slothmode.session.SessionHub} subscribes
+ * in M5; for M4, tests attach a counter to prove notifications fire.
  */
 public final class BreakRepository {
 
     private static final Logger log = LoggerFactory.getLogger(BreakRepository.class);
 
     private final BreakSource source;
-    private final SessionSubject sessionSubject;
+    private final List<Runnable> observers = new ArrayList<>();
     private List<Break> cache;
 
-    public BreakRepository(BreakSource source, SessionSubject sessionSubject) {
+    public BreakRepository(BreakSource source) {
         this.source = source;
-        this.sessionSubject = sessionSubject;
     }
 
     public synchronized List<Break> breaks() {
@@ -38,13 +33,25 @@ public final class BreakRepository {
         return cache;
     }
 
-    /** Drop the cache and ping the session so it re-plans. */
+    public void attach(Runnable observer) {
+        observers.add(observer);
+    }
+
+    public void detach(Runnable observer) {
+        observers.remove(observer);
+    }
+
+    /** Drop the cache and ping every observer. */
     public synchronized void invalidate() {
         cache = null;
         log.debug("BreakRepository invalidated, source={}", source.name());
-        // The session observer contract only knows about SessionState;
-        // for M4 we notify with the current state (a tick-style ping).
-        sessionSubject.notifyStateChanged(null, null);
+        for (Runnable r : observers) {
+            try {
+                r.run();
+            } catch (RuntimeException e) {
+                log.warn("Break observer threw", e);
+            }
+        }
     }
 
     public BreakSource source() {
