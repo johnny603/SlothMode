@@ -94,17 +94,17 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 **Goal:** The calendar is the system of record. Manual breaks write to `.ics`, external edits are picked up live.
 
-- [ ] `BreakSource` (ABSTRACT FACTORY) interface — `ListBreaks`, `AddBreak`, `RemoveBreak`
-- [ ] `CalendarSource` (ConcreteFactory) using `ical4j` — reads/writes `VEVENT`s with `CATEGORIES:SLOTHMODE`
-- [ ] `ManualSource` (ConcreteFactory) — in-memory only, used by tests and by users who don't want a calendar file
-- [ ] `HybridSource` (ConcreteFactory) — merges calendar + manual
-- [ ] `BreakRepository` (OBSERVER) — caches `List<Break>`, invalidates on write, notifies `SessionSubject`
-- [ ] `AddBreakCommand` — uses `CalendarSource.CreateMemento()` → write → `BreakRepository.Invalidate()` → `Notify()` → `SessionHub.Replan()` (the sequence diagram from the design discussion)
-- [ ] `.ics` file watcher via `WatchService` — external edits fire the same `Invalidate() → Notify()` chain
-- [ ] `MergeStrategy` (STRATEGY) — `CalendarWins` (default), `ManualWins`, `AskUser` (v0: just logs the conflict)
-- [ ] `CalendarSourceTest` — round-trip a `.ics` with `ical4j`; verify timezones survive
-- [ ] `AddBreakCommandTest` — the full sequence from the sequence diagram: memento → write → invalidate → notify → replan
-- [ ] `AddBreakCommandFailureTest` — simulate disk-full, verify the Memento restores the file byte-for-byte and **no observer is notified**
+- [x] `BreakSource` (ABSTRACT FACTORY) interface — `ListBreaks`, `AddBreak`, `RemoveBreak`
+- [x] `CalendarSource` (ConcreteFactory) using `ical4j` — reads/writes `VEVENT`s with `CATEGORIES:SLOTHMODE`
+- [x] `ManualSource` (ConcreteFactory) — in-memory only, used by tests and by users who don't want a calendar file
+- [x] `HybridSource` (ConcreteFactory) — merges calendar + manual
+- [x] `BreakRepository` (OBSERVER) — caches `List<Break>`, invalidates on write, notifies `SessionSubject`
+- [x] `AddBreakCommand` — uses `CalendarSource.CreateMemento()` → write → `BreakRepository.Invalidate()` → `Notify()` → `SessionHub.Replan()` (the sequence diagram from the design discussion)
+- [x] `.ics` file watcher via `WatchService` — external edits fire the same `Invalidate() → Notify()` chain
+- [x] `MergeStrategy` (STRATEGY) — `CalendarWins` (default), `ManualWins`, `AskUser` (v0: just logs the conflict)
+- [x] `CalendarSourceTest` — round-trip a `.ics` with `ical4j`; verify timezones survive
+- [x] `AddBreakCommandTest` — the full sequence from the sequence diagram: memento → write → invalidate → notify → replan
+- [x] `AddBreakCommandFailureTest` — simulate disk-full, verify the Memento restores the file byte-for-byte and **no observer is notified**
 
 **Demo:** Add a break in the UI → open the `.ics` in Thunderbird/Apple Calendar → the break is there → edit it externally → SlothMode re-plans live.
 
@@ -204,7 +204,7 @@ The scariest pieces are already scheduled first (M1 overlay, M4 calendar round-t
 | M1 — Lockout overlay | [x] | Week 2 |
 | M2 — State machine | [x] | Week 3 |
 | M3 — Command + Memento | [x] | Week 4 |
-| M4 — Calendar layer | [~] | Week 5–6 |
+| M4 — Calendar layer | [x] | Week 5–6 |
 | M5 — Model layer | [~] | Week 7 |
 | M6 — Rewards | [~] | Week 8 |
 | M7 — Packaging | [ ] | Week 9 |
