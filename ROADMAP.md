@@ -151,12 +151,12 @@ This roadmap is ordered by **risk first**. The pieces most likely to be wrong (t
 
 **Goal:** Ship it as something a non-developer can double-click.
 
-- [ ] `jpackage` config in `pom.xml` — `.msi` (Windows), `.dmg` (macOS), `.deb` (Linux)
-- [ ] GitHub Releases workflow — on tag push, build all three installers
-- [ ] Tray icon (JavaFX `SystemTray`) — shows next scheduled break
-- [ ] `~/.slothmode/` directory layout documented in README
-- [ ] First-run wizard: pick calendar file, pull model, choose lockout style
-- [ ] Full README pass — every section reflects real, shipped behavior
+- [x] `jpackage` config in `pom.xml` — `.msi` (Windows), `.dmg` (macOS), `.deb` (Linux)
+- [x] GitHub Releases workflow — on tag push, build all three installers
+- [x] Tray icon (JavaFX `SystemTray`) — shows next scheduled break
+- [x] `~/.slothmode/` directory layout documented in README
+- [x] First-run wizard: pick calendar file, pull model, choose lockout style
+- [x] Full README pass — every section reflects real, shipped behavior
 
 **Demo:** Download a `.dmg`, install, run — no "install Java first" step.
 
