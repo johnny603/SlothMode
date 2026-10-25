@@ -7,9 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
+/**
+ * SINGLETON: one local config, no server.
+ *
+ * <p>Reads from {@code ~/.slothmode/config.toml}. Creates the default file and
+ * the CalDAV credentials placeholder on first run.</p>
+ */
 public final class ConfigManager {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigManager.class);
@@ -18,36 +23,55 @@ public final class ConfigManager {
     private static final String CREDS_FILE = "data/caldav-credentials";
 
     private static ConfigManager instance;
+
     private final Path homeDir;
+    private final Path configPath;
+    private final SlothConfig config;
 
     private ConfigManager(Path homeDir) {
         this.homeDir = homeDir;
+        this.configPath = homeDir.resolve(SLOTHMODE_DIR).resolve(CONFIG_FILE);
+        this.config = load();
     }
 
     public static synchronized ConfigManager getInstance() {
         if (instance == null) {
-            instance = new ConfigManager(Paths.get(System.getProperty("user.home")));
+            instance = new ConfigManager(Path.of(System.getProperty("user.home")));
         }
         return instance;
     }
 
-    static synchronized ConfigManager forHome(Path homeDir) {
-        instance = new ConfigManager(homeDir);
-        return instance;
+    public SlothConfig config() {
+        return config;
     }
 
-    static synchronized void reset() {
-        instance = null;
+    public Path homeDir() {
+        return homeDir;
     }
 
-    public SlothConfig loadConfig() {
-        Path configPath = homeDir.resolve(SLOTHMODE_DIR).resolve(CONFIG_FILE);
+    public Path configPath() {
+        return configPath;
+    }
+
+    /**
+     * Directory for third-party plugin jars ({@code ~/.slothmode/plugins/}).
+     * The directory is not created here; a missing directory is a no-op for
+     * {@code PluginLoader}.
+     */
+    public Path pluginsDir() {
+        return homeDir.resolve(SLOTHMODE_DIR).resolve("plugins");
+    }
+
+    // ------------------------------------------------------------ internals
+
+    private SlothConfig load() {
         if (!Files.exists(configPath)) {
-            return createDefault(configPath);
+            return createDefault();
         }
-        Properties props = new Properties();
         try (InputStream in = Files.newInputStream(configPath)) {
+            Properties props = new Properties();
             props.load(in);
+
             SlothConfig defaults = SlothConfig.defaults(homeDir.toString());
             return new SlothConfig(
                     props.getProperty("calendar.path", defaults.calendarPath()),
@@ -56,31 +80,16 @@ public final class ConfigManager {
                     props.getProperty("lockout.mode", defaults.lockoutMode()),
                     props.getProperty("model.name", defaults.modelName()),
                     props.getProperty("model.type", defaults.modelType()),
-                    expandPath(props.getProperty("model.path"))
-            );
+                    props.getProperty("model.path", defaults.modelPath()));
         } catch (IOException e) {
-            log.error("Failed to read config at {}", configPath, e);
+            log.error("Could not read config at {}; using defaults", configPath, e);
             return SlothConfig.defaults(homeDir.toString());
         }
     }
 
-    private Path expandPath(String pathStr) {
-        if (pathStr == null || pathStr.isBlank()) {
-            return null;
-        }
-        if (pathStr.startsWith("~")) {
-            return Paths.get(System.getProperty("user.home"), pathStr.substring(1));
-        }
-        return Paths.get(pathStr);
-    }
-
-    private SlothConfig createDefault(Path configPath) {
+    private SlothConfig createDefault() {
         try {
             Files.createDirectories(configPath.getParent());
-            Files.createDirectories(homeDir.resolve(SLOTHMODE_DIR).resolve("logs"));
-            Files.createDirectories(homeDir.resolve(SLOTHMODE_DIR).resolve("data"));
-            Files.createDirectories(homeDir.resolve(SLOTHMODE_DIR).resolve("calendar"));
-
             SlothConfig defaults = SlothConfig.defaults(homeDir.toString());
             String content = """
                     calendar.path = %s
@@ -99,10 +108,13 @@ public final class ConfigManager {
             Files.writeString(configPath, content);
             log.info("Created default config at {}", configPath);
 
-            // Initialize credentials file
+            // Initialize CalDAV credentials placeholder
             Path credsPath = homeDir.resolve(SLOTHMODE_DIR).resolve(CREDS_FILE);
-            Files.writeString(credsPath, "user:password\n");
-            log.info("Created CalDAV credentials placeholder at {}. Please edit this file with your user:password.", credsPath);
+            Files.createDirectories(credsPath.getParent());
+            if (!Files.exists(credsPath)) {
+                Files.writeString(credsPath, "user:password\n");
+                log.info("Created CalDAV credentials placeholder at {}. Please edit this file with your user:password.", credsPath);
+            }
 
             return defaults;
         } catch (IOException e) {
