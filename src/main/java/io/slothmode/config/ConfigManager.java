@@ -51,12 +51,24 @@ public final class ConfigManager {
             return new SlothConfig(
                     props.getProperty("calendar.path", defaults.calendarPath()),
                     props.getProperty("lockout.mode", defaults.lockoutMode()),
-                    props.getProperty("model.name", defaults.modelName())
+                    props.getProperty("model.name", defaults.modelName()),
+                    props.getProperty("model.type", defaults.modelType()),
+                    expandPath(props.getProperty("model.path"))
             );
         } catch (IOException e) {
             log.error("Failed to read config at {}", configPath, e);
             return SlothConfig.defaults(homeDir.toString());
         }
+    }
+
+    private Path expandPath(String pathStr) {
+        if (pathStr == null || pathStr.isBlank()) {
+            return null;
+        }
+        if (pathStr.startsWith("~")) {
+            return Paths.get(System.getProperty("user.home"), pathStr.substring(1));
+        }
+        return Paths.get(pathStr);
     }
 
     private SlothConfig createDefault(Path configPath) {
@@ -71,10 +83,13 @@ public final class ConfigManager {
                     calendar.path = %s
                     lockout.mode = %s
                     model.name = %s
+                    model.type = %s
+                    model.path =
                     """.formatted(
                     defaults.calendarPath(),
                     defaults.lockoutMode(),
-                    defaults.modelName());
+                    defaults.lockoutMode(),
+                    defaults.modelType());
             Files.writeString(configPath, content);
             log.info("Created default config at {}", configPath);
             return defaults;

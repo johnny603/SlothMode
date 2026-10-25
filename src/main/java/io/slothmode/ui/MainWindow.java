@@ -8,6 +8,7 @@ import io.slothmode.lockout.GentleNudgeLockout;
 import io.slothmode.lockout.LockoutAbstraction;
 import io.slothmode.model.ModelFactory;
 import io.slothmode.model.OllamaModelFactory;
+import io.slothmode.model.LlamaCppModelFactory;
 import io.slothmode.model.SlothModel;
 import io.slothmode.session.EventIterator;
 import io.slothmode.session.SessionConfig;
@@ -103,10 +104,15 @@ public final class MainWindow {
 
                     EventIterator iterator = new EventIterator(lines);
                     SummaryVisitor visitor = new SummaryVisitor();
-                    ModelFactory factory = new OllamaModelFactory();
+
+                    ModelFactory factory = "llamacpp".equalsIgnoreCase(config.modelType())
+                            ? new LlamaCppModelFactory(config.modelPath())
+                            : new OllamaModelFactory();
+
                     SlothModel model = factory.createModel();
 
                     SessionSummaryAgent agent = new SessionSummaryAgent(model, iterator, visitor);
+
                     String result = agent.generateDigest();
 
                     Platform.runLater(() -> digestLabel.setText(result));
