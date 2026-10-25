@@ -33,6 +33,7 @@ jobs:
         run: ./mvnw -B verify
 
       - name: Package installer
+        shell: bash
         run: ./mvnw -B package -Pjpackage -Dos.type=${{ matrix.type }}
 
       - name: Upload installer
