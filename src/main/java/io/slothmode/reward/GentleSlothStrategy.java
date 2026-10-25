@@ -1,14 +1,14 @@
 package io.slothmode.reward;
 
-import io.slothmode.config.SlothConfig;
+import io.slothmode.session.SessionConfig;
 
 /**
  * Default point strategy.
  */
 public class GentleSlothStrategy implements BreakStrategy {
-    private final SlothConfig config;
+    private final SessionConfig config;
 
-    public GentleSlothStrategy(SlothConfig config) {
+    public GentleSlothStrategy(SessionConfig config) {
         this.config = config;
     }
 

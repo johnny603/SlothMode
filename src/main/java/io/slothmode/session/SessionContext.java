@@ -53,7 +53,7 @@ public final class SessionContext {
     void resetTimer() { this.remainingSeconds = 0; }
     void setRemainingSeconds(int seconds) { this.remainingSeconds = seconds; }
     void setPointsAwarded(int points) { this.pendingPoints = points; }
-    void addPoints(int delta) {
+    public void addPoints(int delta) {
         this.points += delta;
         this.pendingPoints = Integer.MIN_VALUE;
     }

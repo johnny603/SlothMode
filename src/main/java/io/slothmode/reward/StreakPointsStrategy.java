@@ -1,6 +1,6 @@
 package io.slothmode.reward;
 
-import io.slothmode.config.SlothConfig;
+import io.slothmode.session.SessionConfig;
 
 /**
  * @deprecated Rewards for resting, not grinding.
@@ -8,10 +8,10 @@ import io.slothmode.config.SlothConfig;
  */
 @Deprecated
 public class StreakPointsStrategy implements BreakStrategy {
-    private final SlothConfig config;
+    private final SessionConfig config;
     private int currentStreak = 0;
 
-    public StreakPointsStrategy(SlothConfig config) {
+    public StreakPointsStrategy(SessionConfig config) {
         this.config = config;
     }
 

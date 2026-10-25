@@ -1,14 +1,14 @@
 package io.slothmode.reward;
 
-import io.slothmode.config.SlothConfig;
+import io.slothmode.session.SessionConfig;
 
 /**
  * Fixed point strategy.
  */
 public class FixedPointsStrategy implements BreakStrategy {
-    private final SlothConfig config;
+    private final SessionConfig config;
 
-    public FixedPointsStrategy(SlothConfig config) {
+    public FixedPointsStrategy(SessionConfig config) {
         this.config = config;
     }
 
