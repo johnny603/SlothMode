@@ -207,5 +207,5 @@ The scariest pieces are already scheduled first (M1 overlay, M4 calendar round-t
 | M4 — Calendar layer | [x] | Week 5–6 |
 | M5 — Model layer | [x] | Week 7 |
 | M6 — Rewards | [x] | Week 8 |
-| M7 — Packaging | [~] | Week 9 |
+| M7 — Packaging | [x] | Week 9 |
 | M8 — Stretch | [~] | post-v0 |
