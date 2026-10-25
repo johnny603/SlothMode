@@ -171,6 +171,8 @@ Not in the first release. Tracked so contributors know where the seams are.
 - [x] `LlamaCppModel` real implementation (raw `llama.cpp` bindings)
 - [ ] Ambient soundscape generator via a second open-weight audio model
 - [ ] "Sloth companion" ASCII/JavaFX animation that reacts to session state
+
+(IN PROGRESS)
 - [ ] Plugin API — third-party `BreakSource` and `BreakStrategy` loaded from a `~/.slothmode/plugins/` dir
 
 ---
@@ -208,4 +210,4 @@ The scariest pieces are already scheduled first (M1 overlay, M4 calendar round-t
 | M5 — Model layer | [x] | Week 7 |
 | M6 — Rewards | [x] | Week 8 |
 | M7 — Packaging | [x] | Week 9 |
-| M8 — Stretch | [~] | post-v0 |
+| M8 — Stretch | [~] | post-v0 | 
