@@ -1,5 +1,7 @@
 package io.slothmode.session;
 
+import io.slothmode.command.CommandHistory;
+import io.slothmode.command.DocumentRegistry;
 import io.slothmode.lockout.LockoutAbstraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,8 @@ public final class SessionContext {
     private final SessionConfig config;
     private final LockoutAbstraction lockout;
     private final SessionSubject subject;
+    private final CommandHistory commandHistory;
+    private final DocumentRegistry documentRegistry;
 
     private volatile SessionState current;
     private volatile int remainingSeconds;
@@ -30,6 +34,8 @@ public final class SessionContext {
         this.config = Objects.requireNonNull(config, "config");
         this.lockout = Objects.requireNonNull(lockout, "lockout");
         this.subject = Objects.requireNonNull(subject, "subject");
+        this.commandHistory = new CommandHistory();
+        this.documentRegistry = new DocumentRegistry();
         this.current = IdleState.instance();
         this.remainingSeconds = 0;
         this.points = 0;
@@ -41,6 +47,8 @@ public final class SessionContext {
     public int remainingSeconds() { return remainingSeconds; }
     public int pendingPoints() { return pendingPoints; }
     public int points() { return points; }
+    public CommandHistory commandHistory() { return commandHistory; }
+    public DocumentRegistry documentRegistry() { return documentRegistry; }
 
     void resetTimer() {
         this.remainingSeconds = 0;
