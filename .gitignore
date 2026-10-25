@@ -20,3 +20,4 @@ Thumbs.db
 
 # Maven Wrapper: do not commit the jar
 .mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
